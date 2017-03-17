@@ -1,0 +1,91 @@
+﻿@using BLL
+@using BO;
+@using _2QXRunning.ViewModels;
+@model Common.ViewModels.Lists.ListViewModel<Course>
+
+
+<div class="page-header">
+    <h1>@Model.Title</h1>
+</div>
+
+<!-- FILTRES -->
+<div class="row">
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Filtres <span class="glyphicon glyphicon-search pull-right" aria-hidden="true"></span>
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                    <form>
+                        <div class="form-group">
+                            <div class="input-group input-filtre">
+                                <span class="input-group-addon" id="basic-addon1">Département</span>
+                                <select class="form-control" aria-describedby="basic-addon1">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group form-inline">
+                            <div class="input-group date datePicker input-filtre">
+                                <span class="input-group-addon" id="datePicker1">Du</span>
+                                <input type="text" class="form-control" aria-describedby="datePicker1">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                            <div class="input-group date datePicker input-filtre">
+                                <span class="input-group-addon" id="datePicker2">Au</span>
+                                <input type="text" class="form-control" aria-describedby="datePicker2">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-default pull-right">Filtrer</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<table id="Pagination" class="display" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+        <th>Evenement</th>
+        <th>Departement</th>
+        <th>Course</th>
+        <th>Description</th>
+        <th>Nombre de résultats</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (Course c in @Model.GenericList)
+    {
+        <tr>
+            <td>@c.Evenement.Titre</td>
+            <td>@c.Evenement.Ville.Departement.Nom</td>
+            <td>@c.Titre</td>
+            <td>@c.Description</td>
+        </tr>
+    }
+    </tbody>
+</table>
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Pagination').DataTable();
+        });
+    </script>
+}
+
+

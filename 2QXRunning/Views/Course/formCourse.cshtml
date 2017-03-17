@@ -1,0 +1,52 @@
+﻿@using Common.Tools.Helper.Html.Bootstrap
+@using BO
+@model _2QXRunning.ViewModels.Forms.FormCourseViewModel
+
+<h2>Modifier une course</h2>
+
+@using (Html.BeginForm("Enregistrer", "Course", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(m => m.EvenementId)
+    @Html.HiddenFor(m => m.CourseId)
+    @Html.TBoxFor(m => m.Titre)
+    @Html.TBoxFor(m => m.Distance, new { @class = "form-control", type = "number" })
+    @*@Html.TAeraFor(m => m.Description, new { id = "TAeraDescription", style = "width: 100%; height: 300px; opacity: 0;" })*@
+    @Html.DateTimePickerFor(m => m.DateDepart)
+
+    
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Statuts, new { @class = "col-sm-2 control-label" })
+        <div class="col-sm-10">
+            @Html.ValidationMessageFor(m => m.Evenement.Ville.Nom)
+            @Html.EnumDropDownListFor(m => m.Statuts, "Statut", new { @class = "form-control" })
+        </div>
+    </div>
+
+    @Html.TBoxFor(m => m.Tarif, new { @class = "form-control", type="number" })
+    @Html.DDownListFor(m => Model.CategorieId, Model.Categories, new { @class = "form-control" })
+
+    @Html.Submit();
+
+}
+
+
+@section scripts {
+@Scripts.Render("~/bundles/tinyMCE")
+<script>
+    $(document).ready(function () {
+
+        tinymce.init({
+            selector: '#TAeraDescription',
+            plugin: 'a_tinymce_plugin',
+            a_plugin_option: true,
+            a_configuration_option: 400,
+            menubar: false,
+            toolbar: "",
+            plugins: 'link autolink image preview'
+        });
+
+
+    });
+</script>
+}

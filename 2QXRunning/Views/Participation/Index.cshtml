@@ -1,0 +1,36 @@
+﻿@using BO;
+@using Microsoft.AspNet.Identity
+@using _2QXRunning.ViewModels;
+@model Common.ViewModels.Lists.ListViewModel<Participation>
+<div class="table-responsive">
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Course</th>
+                <th>Position</th>
+                <th>Numéro de dossard</th>
+                @*<th>Nom</th>*@
+                <th>Prénom</th>
+                <th>Temps</th>
+            </tr>
+        </thead>
+        <tbody>
+        @{
+            int counter = 1;
+                foreach (Participation item in Model.GenericList)
+                {
+                    <tr>
+                        <td>@item.Course.Titre</td>
+                        <td>@counter</td>
+                        <td>@item.NumeroDossard</td>
+                        @*<td>@item.ApplicationUser.FirstName</td>*@
+                        <td>@item.ApplicationUser.LastName</td>
+                        <td>@item.TempsDeCourse</td>
+                    </tr>
+                    counter++;
+                }
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,30 @@
+﻿@using _2QXRunning.Ressources
+<div class="navbar navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            @Html.ActionLink("2QX Running", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="@Url.Action("Index", "Evenement")" class="btn">
+                        <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+                        @RessourcesViews.menu_LienCalendrier
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Resultats", "Course")" class="btn">
+                        <span class="glyphicon glyphicon-cup" aria-hidden="true"></span>
+                        @RessourcesViews.menu_LienResultats
+                    </a>
+                </li>                
+            </ul>
+            @Html.Partial("_LoginPartial")
+        </div>
+    </div>
+</div>

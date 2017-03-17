@@ -1,0 +1,159 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@using Common
+@using Common.Tools
+@using _2QXRunning.Ressources
+
+@model _2QXRunning.ViewModels.Home.HomeModel
+
+<div class="jumbotron">
+
+    <!-- CAROUSSEL -->
+    <p class="lead">
+        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+            <!-- Indicators -->
+            <ol class="carousel-indicators">
+                <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+            </ol>
+
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner" role="listbox">
+                <div class="item active">
+                    <img src="@Url.Content("~/Images/Accueil/AiguillesRouges.jpg")" alt="...">
+                </div>
+                <div class="item">
+                    <img src="@Url.Content("~/Images/Accueil/LaPlagne.jpg")" alt="...">
+                </div>
+                <div class="item">
+                    <img src="@Url.Content("~/Images/Accueil/SemiMarathonLisbonne.jpg")" alt="...">
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </p>
+    <h2 class="text-center">@RessourcesViews.home_TextePrincipal</h2>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            @using (Html.BeginForm("Recherche", "Evenement", FormMethod.Post, new { id = "formAccueil" }))
+            {
+                @Html.HiddenFor(m => m.VilleId, new { id = "ville-id", name = "ville-id" })
+                <div class="row">
+                    <div class="col-sm-3">
+                        @Html.DropDownListFor(m => m.CategorieCourseId, Model.ListCategoriesCourses, new { @class = "form-control" })
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div id="inputGroupVille" class="input-group">
+                            <input id="autoCompleteVilles" class="form-control" placeholder="Ville" />
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        @Html.DropDownListFor(m => m.IntervalleTempsId, Model.ListIntervalleTemps, new { @class = "form-control" })
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Rechercher</button>
+                    </div>
+                </div>
+            }
+
+
+        </div>
+    </div>
+</div>
+
+<div class="row">
+
+</div>
+<div class="row">
+    <div class="col-sm-6 col-md-4">
+        <div class="thumbnail">
+            <img src="@Url.Content("~/Images/Icon/chronometer-running.png")" alt="...">
+            <div class="caption">
+                <h3 class="text-center">@RessourcesViews.home_TexteSecondaire1</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="thumbnail">
+            <img src="@Url.Content("~/Images/Icon/group-of-men-running.png")" alt="...">
+            <div class="caption">
+                <h3 class="text-center">@RessourcesViews.home_TexteSecondaire2</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="thumbnail">
+            <img src="@Url.Content("~/Images/Icon/winner-runner-arriving-to-end-line.png")" alt="...">
+            <div class="caption">
+                <h3 class="text-center">@RessourcesViews.home_TexteSecondaire3</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+
+    body {
+        background: url(@Url.Content("~/Images/PageAccueil.jpeg")) no-repeat center center fixed;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+    }
+</style>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function() {
+
+            $("#autoCompleteVilles").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "@Url.Action("Search", "Ville")",
+                        type: "POST",
+                        dataType: "json",
+                        data: { prefix: request.term },
+                        success: function(data) {
+                            response($.map(data,
+                                function(item) {
+                                    return { label: item.Nom + " " + item.CodePostal, value: item.Id };
+                                }));
+
+                        }
+                    });
+                },
+                select: function(e, ui) {
+                    e.preventDefault();
+                    $("#autoCompleteVilles").val(ui.item.label);
+                    $("#ville-id").val(ui.item.value);
+                },
+                change: function(e, ui) {
+                    if (ui.item != null) {
+                        $("#inputGroupVille").addClass("has-success");
+                        $("#inputGroupVille").removeClass("has-warning");
+                    } else {
+
+                        $("#inputGroupVille").removeClass("has-success");
+                        $("#inputGroupVille").addClass("has-warning");
+                    }
+                    $("#ville-id").val((ui.item != null) ? ui.item.value : -1);
+                }
+            });
+        });
+
+    </script>
+}

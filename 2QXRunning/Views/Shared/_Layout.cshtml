@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Mon application ASP.NET</title>
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/dataTables")
+    @Styles.Render("~/Content/jqueryui")
+    @Styles.Render("~/Content/bootstrapDateTimePicker")
+    @Styles.Render("~/Content/fontAwesome")
+    @Styles.Render("~/Content/2QXRunning")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+    @Html.Partial("_Menu")
+
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/dataTables")
+    @Scripts.Render("~/bundles/bootstrapDateTimePicker")
+    
+    @Scripts.Render("~/bundles/2QXRunning")
+    @RenderSection("scripts", required: false)
+    
+    <script>
+
+        function remplirSelectElement(identifiantJQuery, optionsJson) {
+            //Remplit un élément SELECT avec un Json de type :
+            //    optionsJson = [
+            //        { value = XXX, text = XXX, selected = false }
+            //        { value = XXX, text = XXX, selected = true }
+            //        { value = XXX, text = XXX, selected = false }
+            //    ];
+            
+
+            if (identifiantJQuery === undefined) {
+                console.error("identifiantJQuery est undefined.");
+                return;
+            }
+
+            
+            var optionsStr = ""
+            $.each(optionsJson, function () {
+                var selected = "";
+                
+                if (this.selected === true)
+                    selected = "selected";
+
+                optionsStr += "<option value=\"" + this.value + "\" " + selected + ">" + this.text + "</option>";
+            });
+
+            $(identifiantJQuery).html(optionsStr);
+        }
+
+    </script>
+</body>
+</html>

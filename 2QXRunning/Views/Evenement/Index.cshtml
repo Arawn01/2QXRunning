@@ -1,0 +1,49 @@
+﻿@using BLL
+@using BO
+@model Common.ViewModels.Lists.ListViewModel<BO.Evenement>
+
+<div class="page-header">
+    <div class="row">
+        <div class="col-sm-10">
+            <h1>@Model.Title</h1>
+        </div>
+        <div class="col-sm-2">
+            @Html.ActionLink("Créer un évènement", "Create", new { id = -1 }, new { @class = "btn btn-default pull-right" })
+        </div>
+    </div>
+</div>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Titre</th>
+            <th>Date</th>
+            <th>Ville</th>
+            <th>Département</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    
+        @foreach (Evenement e in @Model.GenericList)
+        {
+            <tr>
+                <td>@e.Titre</td>
+                <td>
+                    @if (EvenementMgt.GetDateEvenement(e).HasValue)
+                    {
+                        @EvenementMgt.GetDateEvenement(e).Value
+                    }
+                </td>
+                <td>@e.Ville.Nom (@e.Ville.CodePostal)</td>
+                <td>@e.Ville.Departement.Nom (@e.Ville.Departement.Code)</td>
+                <td>@Html.ActionLink("Détails", "Detail", "Evenement", new { @id = e.Id }, new { @class = "btn btn-default btn-detail" })</td>
+            </tr>
+            
+        }
+
+    
+
+    </tbody>
+</table>
+

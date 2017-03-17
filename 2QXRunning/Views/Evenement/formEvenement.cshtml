@@ -1,0 +1,161 @@
+﻿@using Common.Tools.Helper.Html.Bootstrap
+
+@model _2QXRunning.ViewModels.Forms.FormEvenementViewModel
+
+@Styles.Render("~/Content/duallistbox")
+
+<h2>Modifier un évènement</h2>
+
+@using (Html.BeginForm("Enregistrer", "Evenement", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(m => m.EvenementId)
+    @Html.HiddenFor(m => m.VilleId, new { id = "ville-id", name = "ville-id" })
+    @Html.HiddenFor(m => m.DepartementId, new { id = "departement-id", name = "departement-id" })
+
+    @* Juste pour le dev *@
+    <span>Propriétaire : @Html.DisplayFor(m => m.Evenement.Createur.UserName)</span>
+
+    @Html.DDownListFor(m => Model.TypeManifestationsId, Model.TypeManifestations, new { @class = "form-control" })
+
+    @Html.TBoxFor(model => model.Evenement.Titre, new { style = "width: 100%;", @class = "form-control" })
+
+    @Html.DDownListFor(model => Model.DepartementId, Model.Departements, new { @class = "form-control", @id = "lbx_departements" })
+
+    <div id="inputGroupVille" class="form-group">
+        @Html.LabelFor(m => m.Evenement.Ville.Nom, new { @class = "col-sm-2 control-label" })    
+        <div class="col-sm-10">
+            @Html.ValidationMessageFor(m => m.Evenement.Ville.Nom)
+            @Html.TextBoxFor(m => m.Evenement.Ville.Nom, new { id = "autoCompleteVilles", @class = "form-control", placeholder = "Ville"})
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="col-sm-2 control-label">Types de Paiement</label>
+        <div class="col-sm-10">
+            <div class="row">
+                <div class="col-sm-11">
+                    @*@Html.ListBox("lbx_TypesDePaiement", Model.TypesDePaiement,
+                        new { multiple = "multiple", size = "10", id = "TypesDePaiement", @class="form-control" })*@
+
+                    @* ListBox contenant les Elements sélectionnés. C'est moche, m'enfin... *@
+                    @Html.ListBoxFor(m => m.TypeDePaiementIdSelectionnes,
+                        Model.TypesDePaiement,
+                        new { id = "TypesDePaiement", @class = "form-control" })
+                </div>
+                <div class="col-sm-1">
+                    <a href="#" class="btn btn-default" onclick="reset_lbx_TypesDePaiement();"><span class="glyphicon glyphicon-repeat"></span></a><br/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @Html.TAeraFor(m => m.Evenement.Description, 
+    new { id = "TAeraDescription", style = "width: 100%; height: 300px; opacity: 0;" })
+
+
+    @Html.Submit("Enregistrer", "return validerForm();")
+
+}
+
+
+@section scripts {
+@Scripts.Render("~/bundles/tinyMCE")
+@Scripts.Render("~/bundles/duallistbox")
+<script>
+    var typesDePaiements;
+
+    $(document).ready(function () {
+
+        $('#TAeraDescription').css("opacity", "1");
+
+        // Sauvegarde des types de paiement pour réinitaliser les dualListBoxes
+        typesDePaiements = $('#TypesDePaiement').html();
+        
+
+        // Dual list box    
+        var DualListBox_TypesDePaiement = $('#TypesDePaiement').bootstrapDualListbox({
+            infoText: false,
+            showFilterInputs: false
+        });
+
+
+        tinymce.init({
+            selector: '#TAeraDescription',
+            plugin: 'a_tinymce_plugin',
+            a_plugin_option: true,
+            a_configuration_option: 400,
+            menubar: false,
+            toolbar: "",
+            plugins: 'link autolink image preview'
+        });
+
+        $("#autoCompleteVilles").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "@Url.Action("SearchByIdDepartement_NomStartsWith", "Ville")",
+                    type: "POST",
+                dataType: "json",
+                data: { idDepartement: $('#lbx_departements').val(), rech: request.term },
+                success: function (data) {
+                    response($.map(data,
+                        function (item) {
+                            return { label: item.text, value: item.value };
+                        }));
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.error(errorThrown);
+                }
+            });
+    },
+        select: function (e, ui) {
+            e.preventDefault();
+            $("#autoCompleteVilles").val(ui.item.label);
+            $("#ville-id").val(ui.item.value);
+        },
+    change: function (e, ui) {
+        if (ui.item != null) {
+            $("#inputGroupVille").addClass("has-success");
+            $("#inputGroupVille").removeClass("has-warning");
+        } else {
+            $("#inputGroupVille").removeClass("has-success");
+            $("#inputGroupVille").addClass("has-warning");
+        }
+        $("#ville-id").val((ui.item != null) ? ui.item.value : -1);
+    }
+    });
+    });
+
+    $('#lbx_departements').change(function () {
+        if ($(this).val() != "") {
+            $("#departement-id").val($(this).val());
+        }
+        $('#ville-id').val("");
+        $('#autoCompleteVilles').val("");
+    });
+
+    $('#autoCompleteVilles').keyup(function () {
+        $('#ville-id').val("");
+    })
+
+    function validerForm() {
+        if ($("#inputGroupVille").hasClass("has-warning")) {
+            $('#inputGroupVille div #msgErreurVilles').remove();
+            $("#inputGroupVille div").append("<span id='msgErreurVilles'>Vous devez sélectionner une valeur parmi la liste.</span>");
+            return false
+        } else {
+            return true;
+        }
+            
+    }
+
+
+    function reset_lbx_TypesDePaiement() {
+        $('#TypesDePaiement').html(typesDePaiements);
+        $('#TypesDePaiement').bootstrapDualListbox("refresh", true);
+    }
+
+</script>
+}
+

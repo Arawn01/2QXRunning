@@ -1,0 +1,131 @@
+﻿@using Microsoft.AspNet.Identity
+@using _2QXRunning.ViewModels.Detail
+@using BO
+@model _2QXRunning.ViewModels.Detail.DetailEvenementViewModel
+
+
+<div class="row">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">@Model.Evenement.Titre</h3>
+        </div>
+        <div class="panel-body">
+            <div class="col-sm-8">
+                <h4>
+                    @if (Model.DateDebut.HasValue)
+                    {
+                        <span class="label label-info">@Model.DateDebut.Value.ToString("dd/MM/yyyy")</span>
+                    }
+                    <span class="label label-info">Ville : @Model.Evenement.Ville.Nom (@Model.Evenement.Ville.CodePostal)</span>
+                    <span class="label label-info">Département : @Model.Evenement.Ville.Departement.Nom (@Model.Evenement.Ville.Departement.Code)</span>
+                    <span class="label label-info">Type de manifestation : @Model.Evenement.TypeManifestation.Libelle</span>
+                </h4>
+                <div class="divTexteHtml">@Html.Raw(Model.Evenement.Description)</div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Inscription/Verification</h3>
+                        @if (Model.Evenement.Createur.Id.Equals(User.Identity.GetUserId()))
+                        {
+                            @Html.ActionLink("Modifier l'évènement", "Create", new { id = Model.Evenement.Id })
+                        }
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-group">
+                            @if (Model.Evenement.Createur.Id.Equals(User.Identity.GetUserId()))
+                            {
+                                @Html.ActionLink("Créer une course", "Create", "Course", new { EvenementId = Model.Evenement.Id, CourseId = -1 }, new { @class = "btn btn-xs btn-default" })
+                            }
+                            @foreach (CourseDetail courseDetail in Model.CoursesDetail)
+                            {
+                                <li class="list-group-item clearfix">
+                                    <div class="row">
+                                        <div class="col-sm-10">
+                                            <div class="pull-left">@courseDetail.Course.Titre</div>
+                                        </div>
+                                        <div class="col-sm-2 pull-right">
+                                            @if (Model.Evenement.Createur.Id.Equals(User.Identity.GetUserId()))
+                                            {
+                                                <a href="@Url.Action("Create", "Course",
+                                                        new { EvenementId = Model.Evenement.Id, CourseId = courseDetail.Course.Id })"
+                                                   class="glyphicon glyphicon-pencil pull-right" style="color: white;"></a>
+                                                   
+                                                <a href="@Url.Action("Delete", "Course", 
+                                                        new { EvenementId = Model.Evenement.Id, CourseId = courseDetail.Course.Id })"
+                                                   class="glyphicon glyphicon-remove pull-right" style="margin-left: 5px;"
+                                                   onclick="return confirmDelete('@courseDetail.Course.Titre');"></a>
+                                            }
+                                        </div>
+                                    </div>
+                                    <span class="label-success label">@courseDetail.Course.Distance Km</span>
+                                    <span class="label-success label">@courseDetail.Course.DateDepart</span>
+                                    <span class="pull-right">
+                                        @switch (courseDetail.ParticipationUtilisateur)
+                                        {
+                                            case ParticipationUtilisateur.Non_inscrit:
+                                                @Html.ActionLink("S'inscrire", "Create", "Participation", new { @courseId = courseDetail.Course.Id }, new { @class = "btn btn-xs btn-info" })
+                                                break;
+                                            case ParticipationUtilisateur.En_attende_de_validation:
+                                                <span class="label-warning label">En Attente de validation</span>
+                                                break;
+                                            case ParticipationUtilisateur.Inscription_validée:
+                                                <span class="label-success label">Inscrit</span>
+                                                break;
+                                        }
+                                        @if (Model.Evenement.Createur.Id.Equals(User.Identity.GetUserId()))
+                                        {
+                                            <button class="btn btn-xs btn-warning">Validation des inscriptions</button>
+                                        }
+
+
+                                    </span>
+                                </li>
+                            }
+                        </ul>
+                        
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Types de paiement</h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-group">
+                            @foreach (TypeDePaiement typePaiement in Model.Evenement.TypesDePaiement)
+                            {
+                                <li class="list-group-item clearfix">
+                                    <span class="">
+                                        @typePaiement.Nom
+                                    </span>
+                                </li>
+                            }
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+@section scripts {
+    <script>
+    $(document).ready(function() {
+        $(".evenement").hover(
+
+            function () {
+                $(this).css("background-color", "rgba(5,5,5,0.2)");
+            }, function() {
+                $(this).css("background-color", "rgba(220,220,220,0.3)");
+            });
+    });
+
+    function confirmDelete(titre)
+    {
+        return confirm("Voulez-vous vraiment supprimer la course \"" + titre + "\" ?\n\nCette action est irréversible.");
+    }
+
+    </script>
+}

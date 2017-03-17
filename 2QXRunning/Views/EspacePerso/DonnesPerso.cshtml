@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Espace personnel";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p class="text-success">@ViewBag.StatusMessage</p>
+<div class="row">
+    @Html.Partial("_EspacePersoMenu")
+    <div class="col-sm-9">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Gestion de votre compte</h3>
+            </div>
+            <div class="panel-body">
+                <dl class="dl-horizontal">
+                    <dt>Mot de passe :</dt>
+                    <dd>
+                        [@Html.ActionLink("Changer votre mot de passe", "ChangePassword", "Manage")]
+                    </dd>
+                    <dt>Adresse mail :</dt>
+                    <dd>
+                        @User.Identity.GetUserName()  [@Html.ActionLink("Changer votre e-mail", "ChangeEmail", "EspacePerso")]
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            //Activation du menu sur la gauche
+            $('#mnuDonneesPerso').addClass('active');
+        });
+    </script>
+}

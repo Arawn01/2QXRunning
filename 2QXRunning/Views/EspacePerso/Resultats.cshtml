@@ -1,0 +1,61 @@
+﻿@{
+    ViewBag.Title = "Espace personnel";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p class="text-success">@ViewBag.StatusMessage</p>
+<div class="row">
+    @Html.Partial("_EspacePersoMenu")
+    <div class="col-sm-9">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Vos résultats</h3>
+            </div>
+            <div class="panel-body">
+                <table id="example" class="table table-responsive table-hover">
+                    <thead>
+                        <tr>
+                            <th>Titre</th>
+                            <th>Date de départ</th>
+                            <th>Categorie</th>
+                            <th>Distance</th>
+                            <th>Temps</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+
+            //Activation du menu sur la gauche
+            $('#mnuResultats').addClass('active');
+
+            //Recherche des résultats de l'utilisateur
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "@Url.Action("ResultatsUtilisateur", "Course")",
+                success: function(data) {
+                    $('#example').DataTable({
+                        "language": { "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/French.json" },
+                        data: data,
+                        columns: [
+                            { 'data': 'Titre' },
+                            { 'data': 'DateDepart' },
+                            { 'data': 'Categorie' },
+                            { 'data': 'Distance' },
+                            { 'data': 'TempsDeCourse' }
+                        ]
+                    });
+                }
+            });
+        });
+    </script>
+}
